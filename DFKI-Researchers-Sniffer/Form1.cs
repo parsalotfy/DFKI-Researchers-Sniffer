@@ -47,7 +47,6 @@ namespace DFKI_Researchers_Sniffer
             string dfkiLink = "/web/forschung/forschungsbereiche";
             DFKI_Page dfki = Crawl<DFKI_Page>(dfkiLink);
 
-            //List<string> list = new List<string>();
             foreach (var department in dfki.Departments)
             {
                 DFKI_Team teamPage = Crawl<DFKI_Team>(department.DepartmentLink);
@@ -57,19 +56,18 @@ namespace DFKI_Researchers_Sniffer
 
                 for (int i = 0; i < team.Groups.Count - 1; i++)
                 {
-                    //list.AddRange(team.Groups[i].ResearcherNames);
-
-                    foreach (var groupMember in team.Groups[i].ResearcherNames)
+                    for (int j = 0; j < team.Groups[i].ResearcherNames.Count; j++)
                     {
-                        string personName = RemoveTitle(groupMember);
-                        context.Researchers.Add(new Researcher(Guid.NewGuid().ToString(), personName, department.DepartmentName));
-
+                        string personName = RemoveTitle(team.Groups[i].ResearcherNames[j]);
+                        string email = team.Groups[i].ResearcherEmails[j].Replace("&#64;","@").Replace("&#46;",".");
+                        context.Researchers.Add(new Researcher(Guid.NewGuid().ToString(), personName, department.DepartmentName, email));
+                        
                         context.SaveChanges();
                     }
+
                 }
 
             }
-            //return list;
         }
 
         public static T Crawl<T>(string link)
@@ -128,6 +126,10 @@ namespace DFKI_Researchers_Sniffer
     {
         [XPath("div[2]/ul/li/strong/a")]
         public List<string> ResearcherNames { get; set; }
+
+        [XPath("div[2]/ul/li/a")]
+        public List<string> ResearcherEmails { get; set; }
+
     }
 
 }

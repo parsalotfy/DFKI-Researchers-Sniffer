@@ -29,11 +29,12 @@ namespace DFKI_Researchers_Sniffer
 
         }
 
-        public Researcher(string _id, string rName, string depName)
+        public Researcher(string _id, string rName, string depName, string email)
         {
             rid = _id;
             ResearcherName = rName;
             ResearcherDepartment = depName;
+            Email = email;
         }
 
 
