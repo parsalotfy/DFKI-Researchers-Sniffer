@@ -1,0 +1,85 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Parsa\\Source\\Repos\\DFKI-Researchers-Sniffer\\DFKI-Researchers-Sniffer\\DFKI-Researchers-Sniffer.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Parsa\\Source\\Repos\\DFKI-Researchers-Sniffer\\DFKI-Researchers-Sniffer\\DFKI-Researchers-Sniffer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Parsa\\Source\\Repos\\DFKI-Researchers-Sniffer\\DFKI-Researchers-Sniffer\\DFKI-Researchers-Sniffer.csproj",
+        "projectName": "DFKI-Researchers-Sniffer",
+        "projectPath": "C:\\Users\\Parsa\\Source\\Repos\\DFKI-Researchers-Sniffer\\DFKI-Researchers-Sniffer\\DFKI-Researchers-Sniffer.csproj",
+        "packagesPath": "C:\\Users\\Parsa\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Parsa\\Source\\Repos\\DFKI-Researchers-Sniffer\\DFKI-Researchers-Sniffer\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Parsa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0-windows7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0-windows7.0": {
+            "targetAlias": "net6.0-windows",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0-windows7.0": {
+          "targetAlias": "net6.0-windows",
+          "dependencies": {
+            "HtmlAgilityPack": {
+              "target": "Package",
+              "version": "[1.11.42, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[6.0.5, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WindowsForms": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.300\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
