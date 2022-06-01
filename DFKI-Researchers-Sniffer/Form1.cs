@@ -31,7 +31,7 @@ namespace DFKI_Researchers_Sniffer
             dataGridView1.DataSource = list.Where(x =>
             (x.ResearcherName).ToLower().Contains(textBox1.Text.ToLower()) ||
             (x.ResearcherDepartment).ToLower().Contains(textBox1.Text.ToLower()))
-            .ToList();            
+            .ToList();
         }
 
 
@@ -42,7 +42,7 @@ namespace DFKI_Researchers_Sniffer
 
 
         public void UpdateDB()
-        {            
+        {
             string dfkiLink = "/web/forschung/forschungsbereiche";
             DFKI_Page dfki = Crawl<DFKI_Page>(dfkiLink);
 
@@ -58,17 +58,20 @@ namespace DFKI_Researchers_Sniffer
                         string personName = RemoveTitle(team.Groups[i].ResearcherNames[j]);
                         string email = team.Groups[i].ResearcherEmails[j].Replace("&#64;", "@").Replace("&#46;", ".");
 
-                        
-                        if(context.Researchers.Where(x=>x.Email==email).Count()==0)
+
+                        if (context.Researchers.Where(x => x.Email == email).Count() == 0)
                         {
-                            context.Researchers.Add(new Researcher(email, personName, department.DepartmentName));                                                        
-                        }    
+                                context.Researchers.Add(new Researcher(email, personName, department.DepartmentName));
+                                context.SaveChanges();
+          
+
+                        }
                     }
 
                 }
 
             }
-            context.SaveChanges();
+
         }
 
         public static T Crawl<T>(string link)
@@ -95,15 +98,16 @@ namespace DFKI_Researchers_Sniffer
             {
                 foreach (var personName in publication.Names)
                 {
-                    if (dbResearchers.Where(x=>x.ResearcherName.Contains(personName)||
-                    personName.Contains(x.ResearcherName)).ToList().Count==0)
+                    if (dbResearchers.Where(x => personName == x.ResearcherName).ToList().Count == 0)
                     {
-                        context.Researchers.Add(new Researcher( "N/A", personName, "N/A"));
+                        context.Researchers.Add(new Researcher(Guid.NewGuid().ToString(), personName, "N/A"));
+                        context.SaveChanges();
                     }
+
                 }
             }
 
-            context.SaveChanges();
+
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -112,13 +116,13 @@ namespace DFKI_Researchers_Sniffer
             //context.Database.ExecuteSqlRaw("delete from Publications");
             //context.Database.ExecuteSqlRaw("delete from HasPublication");
 
-     
+
             foreach (var r in context.Researchers)
             {
                 context.Researchers.Remove(r);
             }
 
-         
+
 
             context.SaveChanges();
             MessageBox.Show("Deleted");
