@@ -14,8 +14,6 @@ namespace DFKI_Researchers_Sniffer
             DbPath = Application.StartupPath + "dfki.db";
         }
 
-
-
         protected override void OnConfiguring(DbContextOptionsBuilder options)
        => options.UseSqlite($"Data Source={DbPath}");
 
@@ -29,20 +27,20 @@ namespace DFKI_Researchers_Sniffer
 
         }
 
-        public Researcher(string _id, string rName, string depName, string email)
+        public Researcher(string email,string rName, string depName)
         {
-            rid = _id;
+            Email = email;
             ResearcherName = rName;
             ResearcherDepartment = depName;
-            Email = email;
         }
 
 
         [Key]
-        public string rid { get; set; }
+        public string Email { get; set; }
+
         public string ResearcherName { get; set; }
         public string ResearcherDepartment { get; set; }
-        public string Email { get; set; }
+
 
     }
 
