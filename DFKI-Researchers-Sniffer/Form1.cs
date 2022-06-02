@@ -11,7 +11,6 @@ namespace DFKI_Researchers_Sniffer
         public static DFKIContext context = new DFKIContext();
 
         public static string baseurl = "https://www.dfki.de";
-
         public Form1()
         {
             InitializeComponent();
@@ -29,19 +28,17 @@ namespace DFKI_Researchers_Sniffer
             var list = new BindingList<Researcher>(researchers);
 
             dataGridView1.DataSource = list.Where(x =>
-            (x.ResearcherName).ToLower().Contains(textBox1.Text.ToLower()) ||
-            (x.ResearcherDepartment).ToLower().Contains(textBox1.Text.ToLower()))
+            (x.Name).ToLower().Contains(textBox1.Text.ToLower()) ||
+            (x.Department).ToLower().Contains(textBox1.Text.ToLower()))
             .ToList();
         }
-
 
         public static string RemoveTitle(string name)
         {
             return Regex.Replace(name, @"(\w+\.|,|-)", "").Trim();
         }
 
-
-        public void UpdateDB()
+        public void UpdateResearchers()
         {
             string dfkiLink = "/web/forschung/forschungsbereiche";
             DFKI_Page dfki = Crawl<DFKI_Page>(dfkiLink);
@@ -58,21 +55,72 @@ namespace DFKI_Researchers_Sniffer
                         string personName = RemoveTitle(team.Groups[i].ResearcherNames[j]);
                         string email = team.Groups[i].ResearcherEmails[j].Replace("&#64;", "@").Replace("&#46;", ".");
 
-
                         if (context.Researchers.Where(x => x.Email == email).Count() == 0)
                         {
-                                context.Researchers.Add(new Researcher(email, personName, department.DepartmentName));
-                                context.SaveChanges();
-          
+                            context.Researchers.Add(new Researcher(email, personName, department.DepartmentName));
+                            context.SaveChanges();
+                        }
+                    }
+                }
+            }
+        }
 
+        public void UpdateHasPublications(int from_page, int to_page)
+        {
+            // last page is 1050
+
+            List<DFKI_Publication> allPublications = new List<DFKI_Publication>();
+            List<Researcher> dbResearchers = context.Researchers.ToList();
+
+            // 1 to 1051
+            for (int i = from_page; i <= to_page; i++)
+            {
+                string pubsLink = $"/web/forschung/projekte-publikationen/publikationen?tx_solr%5Bpage%5D={i}";
+                DFKI_Publication_Page pubsPage = Crawl<DFKI_Publication_Page>(pubsLink);
+
+                foreach (var publication in pubsPage.Publications)
+                {
+
+                    string pid = Guid.NewGuid().ToString();
+                    //context.Publications.Add(new Publication(pid, publication.PublicationName));
+                    //context.SaveChanges();
+                    foreach (var personName in publication.Names)
+                    {
+                        if (dbResearchers.Where(x => personName == x.Name).ToList().Count == 0)
+                        {
+                            context.Researchers.Add(new Researcher(Guid.NewGuid().ToString(), personName, "N/A"));
+                            context.SaveChanges();
+                        }
+                        List<Researcher> researchers = dbResearchers.Where(x => x.Name == personName).ToList();
+                        foreach (var researcher in researchers)
+                        {
+                            context.HasPublications.Add(new HasPublication(Guid.NewGuid().ToString(), researcher.Email, publication.PublicationName));
+                            context.SaveChanges();
                         }
                     }
 
-                }
 
+                }
+                allPublications.AddRange(pubsPage.Publications);
             }
 
+            var list = new BindingList<DFKI_Publication>(allPublications);
+
+
+            dataGridView2.DataSource = list.Where(x =>
+            (x.PublicationName).ToLower().Contains(textBox1.Text.ToLower()))
+            .ToList();
         }
+
+        public void UpdateDB()
+        {
+            UpdateResearchers();
+            
+            UpdateHasPublications(1,10500);
+            
+        }
+
+
 
         public static T Crawl<T>(string link)
         {
@@ -84,56 +132,31 @@ namespace DFKI_Researchers_Sniffer
 
         private void button2_Click(object sender, EventArgs e)
         {
+            TruncateAllTables();
             UpdateDB();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+
+        public void TruncateAllTables()
         {
-            string pubsLink = "/web/forschung/projekte-publikationen/publikationen?tx_solr%5Bpage%5D=1050";
-            DFKI_Publication_Page pubsPage = Crawl<DFKI_Publication_Page>(pubsLink);
-
-            List<Researcher> dbResearchers = context.Researchers.ToList();
-
-            foreach (var publication in pubsPage.Publications)
-            {
-                foreach (var personName in publication.Names)
-                {
-                    if (dbResearchers.Where(x => personName == x.ResearcherName).ToList().Count == 0)
-                    {
-                        context.Researchers.Add(new Researcher(Guid.NewGuid().ToString(), personName, "N/A"));
-                        context.SaveChanges();
-                    }
-
-                }
-            }
-
-
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            //context.Database.ExecuteSqlRaw("delete from Researchers");
-            //context.Database.ExecuteSqlRaw("delete from Publications");
-            //context.Database.ExecuteSqlRaw("delete from HasPublication");
-
-
             foreach (var r in context.Researchers)
             {
                 context.Researchers.Remove(r);
             }
-
-
+            foreach (var link in context.HasPublications)
+            {
+                context.HasPublications.Remove(link);
+            }
 
             context.SaveChanges();
-            MessageBox.Show("Deleted");
         }
 
-        private void textBox2_TextChanged(object sender, EventArgs e)
+
+        private void button5_Click(object sender, EventArgs e)
         {
 
         }
     }
-
 
     [HasXPath]
     public class DFKI_Page
@@ -160,8 +183,6 @@ namespace DFKI_Researchers_Sniffer
         public string TeamLink { get; set; }
     }
 
-
-
     [HasXPath]
     public class DFKI_Employees
     {
@@ -169,7 +190,6 @@ namespace DFKI_Researchers_Sniffer
         [XPath("//*[@class='person-list-view']/div")]
         public List<DFKI_Researchers> Groups { get; set; }
     }
-
 
     [HasXPath]
     public class DFKI_Researchers
@@ -179,9 +199,7 @@ namespace DFKI_Researchers_Sniffer
 
         [XPath("div[2]/ul/li/a")]
         public List<string> ResearcherEmails { get; set; }
-
     }
-
 
     [HasXPath]
     public class DFKI_Publication_Page
@@ -199,5 +217,4 @@ namespace DFKI_Researchers_Sniffer
         [XPath("div/div[2]/h3/a")]
         public string PublicationName { get; set; }
     }
-
 }
