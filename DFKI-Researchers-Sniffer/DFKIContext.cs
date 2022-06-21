@@ -7,6 +7,7 @@ namespace DFKI_Researchers_Sniffer
     {
         public DbSet<Researcher> Researchers { get; set; }
         public DbSet<HasPublication> HasPublications { get; set; }
+        public DbSet<Publication> Publications { get; set; }
 
         public string DbPath { get; }
 
@@ -59,4 +60,22 @@ namespace DFKI_Researchers_Sniffer
         public string Email { get; set; }
         public string PublicationName { get; set; }
     }
+
+    public class Publication
+    {
+        public Publication()
+        {
+
+        }
+
+        public Publication(string pName)
+        {
+            Name = pName;
+        }
+
+        [Key]
+        public string Name { get; set; }
+    }
+
+
 }
