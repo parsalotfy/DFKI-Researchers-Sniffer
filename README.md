@@ -1,5 +1,7 @@
 # DFKI-Researchers-Sniffer
 
+The application enables the user to search keywords in DFKI publications and see the authors, their email and their other publications.
+This should help students to find researchers in the same field they are interested in and potentialy secure a HIWI position.
 
 This project crawls the [FORSCHUNGSBEREICHE](https://www.dfki.de/web/forschung/forschungsbereiche) webpage to retrieve all the researchers working in each department.
 
